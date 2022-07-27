@@ -85,6 +85,7 @@
 
     </platform>
 
+
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="LocationManager" >
@@ -92,8 +93,30 @@
             </feature>
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest">
+     <config-file target="AndroidManifest.xml" parent="/manifest">
+			<uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+			<receiver android:exported="true" android:name="org.altbeacon.beacon.startup.StartupBroadcastReceiver" >
+				<intent-filter>
+					<action android:name="android.intent.action.BOOT_COMPLETED" />
+					<action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+					<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+				</intent-filter>
+			</receiver>
+          
+            <service android:enabled="true"
+                     android:name="org.altbeacon.beacon.BeaconIntentProcessor">
+                <meta-data android:name="background" android:value="true" />
+                <intent-filter android:priority="1" >
+                    <action android:name="com.unarin.cordova.beacon.IBeaconPlugin.DID_RANGING" />
+                    <action android:name="com.unarin.cordova.beacon.IBeaconPlugin.DID_MONITORING" />
+                </intent-filter>
+            </service>
         </config-file>
 
         <source-file src="src/android/LocationManager.java" target-dir="src/com/unarin/cordova/beacon" />
